@@ -9,6 +9,11 @@
 </head>
 <body>
     <div>Home page: <a href="/">Home</a></div>
+    {% if current_user.is_anonymous %}
+        <div>Login page: <a href="/login">Login</a></div>
+    {% else %}
+        <div>Logout page: <a href="/logout">Logout</a></div>
+    {% endif %}
     <hr>
     {% block content %}{% endblock %}
 
