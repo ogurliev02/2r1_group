@@ -4,6 +4,12 @@ from app.forms import LoginForm, RegistrationForm
 from app.models import User, Post
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
+from datetime import datetime
+
+@app.before_request
+def before_request():
+    current_user.last_seen = datetime.utcnow()
+    db.session.commit()
 
 @app.route('/')
 @app.route('/index')
@@ -11,10 +17,12 @@ from werkzeug.urls import url_parse
 def index():
     return 'Welcome Home!'
 
-@app.route('/user')
-def user():
-    posts = Post.query.all()
-    return render_template('user.html', title='User', posts=posts)
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = user.posts
+    return render_template('user.html', title='User', posts=posts, user=user)
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():

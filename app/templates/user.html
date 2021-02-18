@@ -1,8 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ current_user.username }}!</h1>
+    <img src="{{ avatars.robohash(user.username) }}">
+    <h1>User: {{ user.username }}</h1>
     {% for post in posts %}
         <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
     {% endfor %}
+
+    {% if user.about_me %}
+        <p>{{ user.about_me }}</p>
+    {% endif %}
+    {% if user.last_seen %}
+        <p>{{ user.last_seen }}</p>
+    {% endif %}
 {% endblock %}
