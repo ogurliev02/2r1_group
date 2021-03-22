@@ -5,12 +5,19 @@
 
     {% if user == current_user %}
         <p><a href="{{ url_for('edit_profile') }}">Edit your prfile!</a></p>
+    {% elif not current_user.is_following(user) %}
+        <p><a href="{{ url_for('follow', username=user.username) }}">Follow</a></p>
+    {% else %}
+        <p><a href="{{ url_for('unfollow', username=user.username) }}">Unfollow</a></p>
     {% endif %}
 
     <h1>User: {{ user.username }}</h1>
     {% for post in posts %}
         <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
     {% endfor %}
+
+    <p>{{ user.followers.count() }} followers</p>
+    <p>{{ user.followed.count() }} followed</p>
 
     {% if user.about_me %}
         <p>{{ user.about_me }}</p>
