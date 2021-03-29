@@ -9,7 +9,3 @@ def not_found_error(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
-
-# @app.errorhandler(400)
-# def query_error(error):
-    
