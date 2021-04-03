@@ -12,9 +12,6 @@
     {% endif %}
 
     <h1>User: {{ user.username }}</h1>
-    {% for post in posts %}
-        <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
-    {% endfor %}
 
     <p>{{ user.followers.count() }} followers</p>
     <p>{{ user.followed.count() }} followed</p>
@@ -24,5 +21,16 @@
     {% endif %}
     {% if user.last_seen %}
         <p>{{ user.last_seen }}</p>
+    {% endif %}
+
+    {% for post in posts %}
+        <p>{{ post.author.username }} says: <b>{{ post.body }}</b></p>
+    {% endfor %}
+
+    {% if prev_url %}
+        <a href="{{ prev_url }}">Newer Posts</a>
+    {% endif %}
+    {% if next_url %}
+        <a href="{{ next_url }}">Older Posts</a>
     {% endif %}
 {% endblock %}
