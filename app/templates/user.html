@@ -1,36 +1,59 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <img src="{{ avatars.robohash(user.username) }}">
+{% block app_content %}
+    <table class="table table-hover">
+        <tr>
+            <td width="256px">
+                <img src="{{ avatars.robohash(user.username) }}">
+            </td>
+            <td>
+                <h1>User: {{ user.username }}</h1>
+                {% if user.about_me %}
+                <p>{{ user.about_me }}</p>
+                {% endif %}
+                {% if user.last_seen %}
+                    <p>{{ user.last_seen }}</p>
+                {% endif %}
+                <p>{{ user.followers.count() }} followers</p>
+                <p>{{ user.followed.count() }} followed</p>
 
-    {% if user == current_user %}
-        <p><a href="{{ url_for('edit_profile') }}">Edit your prfile!</a></p>
-    {% elif not current_user.is_following(user) %}
-        <p><a href="{{ url_for('follow', username=user.username) }}">Follow</a></p>
-    {% else %}
-        <p><a href="{{ url_for('unfollow', username=user.username) }}">Unfollow</a></p>
-    {% endif %}
-
-    <h1>User: {{ user.username }}</h1>
-
-    <p>{{ user.followers.count() }} followers</p>
-    <p>{{ user.followed.count() }} followed</p>
-
-    {% if user.about_me %}
-        <p>{{ user.about_me }}</p>
-    {% endif %}
-    {% if user.last_seen %}
-        <p>{{ user.last_seen }}</p>
-    {% endif %}
+                {% if user == current_user %}
+                    <p><a href="{{ url_for('edit_profile') }}">Edit your prfile!</a></p>
+                {% elif not current_user.is_following(user) %}
+                    <p>
+                        <form action="{{ url_for('follow', username=user.username) }}" method="POST">
+                            {{ form.hidden_tag() }}
+                            {{ form.submit(value='Follow', class_='btn btn-default') }}
+                        </form>
+                    </p>
+                {% else %}
+                    <p>
+                        <form action="{{ url_for('unfollow', username=user.username) }}" method="POST">
+                            {{ form.hidden_tag() }}
+                            {{ form.submit(value='Unfollow', class_='btn btn-default') }}
+                        </form>
+                    </p>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
 
     {% for post in posts %}
-        <p>{{ post.author.username }} says: <b>{{ post.body }}</b></p>
+        {% include '_post.html' %}
     {% endfor %}
 
-    {% if prev_url %}
-        <a href="{{ prev_url }}">Newer Posts</a>
-    {% endif %}
-    {% if next_url %}
-        <a href="{{ next_url }}">Older Posts</a>
-    {% endif %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous {% if not prev_url %} disabled {% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Newer posts
+                </a>
+            </li>
+            <li class="next {% if not next_url %} disabled {% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Older posts<span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 {% endblock %}
